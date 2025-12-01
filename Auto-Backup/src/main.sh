@@ -50,13 +50,13 @@ SOURCE_FOLDER=$(expand_tilde "$SOURCE_FOLDER_IN")
 
 printf "Masukkan folder tujuan backup: "
 read -r DEST_FOLDER_IN
-
 DEST_FOLDER_IN=$(echo "$DEST_FOLDER_IN" | tr -d '\r')
 DEST_FOLDER=$(expand_tilde "$DEST_FOLDER_IN")
 
 printf "Masukkan lama penyimpanan backup (hari): "
 read -r RETENTION_DAYS_IN
 RETENTION_DAYS_IN=$(trim " $RETENTION_DAYS_IN")
+
 
 # validate retention is a positive integer
 if ! echo "$RETENTION_DAYS_IN" | grep -qE '^[0-9]+$'; then
@@ -66,16 +66,10 @@ else
 	RETENTION_DAYS="$RETENTION_DAYS_IN"
 fi
 
-# Echo paths back
-echo "Folder sumber: $SOURCE_FOLDER"
-echo "Folder tujuan: $DEST_FOLDER"
-echo "Lama penyimpanan backup (hari): $RETENTION_DAYS"
-
 #Validate source folder exists
 if [ ! -d "$SOURCE_FOLDER" ]; then
 	error_exit "Folder sumber '$SOURCE_FOLDER' tidak ditemukan."
 fi
-
 # Create destination folder if not exists
 if [ ! -d "$DEST_FOLDER" ]; then
 	echo "Folder tujuan tidak ada - akan dibuat: $DEST_FOLDER"
@@ -84,6 +78,7 @@ if [ ! -d "$DEST_FOLDER" ]; then
 	fi
 fi
 
+
 # Prepare backup filename
 TIMESTAMP=$(date '+%Y%m%d - %H%M%S')
 BACKUP_FILE="backup-$TIMESTAMP.tar.gz"
@@ -91,9 +86,9 @@ BACKUP_PATH="$DEST_FOLDER/$BACKUP_FILE"
 
 # SIMPAN WAKTU MULAI 
 START_TIME=$(date '+%Y-%m-%d %H:%M:%S')
-
 # Start log
 write_log "Backup started: $SOURCE_FOLDER"
+
 
 # Create compressed archive
 # Use tar with gzip; preserve permissions; follow symlinks (use -h if you want)
@@ -126,6 +121,11 @@ if [ "$RETENTION_DAYS" -gt 0 ] 2>/dev/null; then
 
 fi
 
+
+# Echo paths back
+echo "Folder sumber: $SOURCE_FOLDER"
+echo "Folder tujuan: $DEST_FOLDER"
+echo "Lama penyimpanan backup (hari): $RETENTION_DAYS"
+
 echo "Proses backup telah berhasil dilakukan!"
 exit 0
-
