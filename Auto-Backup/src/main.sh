@@ -1,7 +1,7 @@
 #!/bin/bash
 # main.sh - Sistem Backup Otomatis dengan Log & Rotasi
 
-# --------Helpers --------
+# fungsi tambahan
 trim() {
 	echo "$1" | awk '{$1=$1;print}'
 }
@@ -118,7 +118,6 @@ rm -f /tmp/backup_tar_err.log
 # Rotation: delete backups older than retention days
 if [ "$RETENTION_DAYS" -gt 0 ] 2>/dev/null; then
 	find "$DEST_FOLDER" -maxdepth 1 -type f -name "backup-*.tar.gz" -mtime "+$RETENTION_DAYS" -delete >/dev/null 2>&1
-
 fi
 
 
